@@ -12,6 +12,7 @@ A lightweight, frictionless, web-based event invitation and gate check-in system
 - **🔒 Database Concurrency Lock**: Secured with row-level transaction database locks (`SELECT ... FOR UPDATE` in MySQL InnoDB & PostgreSQL) to completely eliminate double-scanning or ticket-sharing race conditions.
 - **📊 Live Check-in Metrics**: Real-time event tiles in the dashboard showing check-in progress bars and ratios (e.g. `14/50 Checked In`).
 - **🛡️ Secure Access Protection**: Restricts scans to verified event owners while providing guests with a friendly invitation details landing page.
+- **⚙️ Toggleable Organizer Registrations**: Turn off new account registrations dynamically via an environment variable flag (`NEXT_PUBLIC_DISABLE_SIGNUP`) when sign-ups are not needed.
 
 ---
 
@@ -42,6 +43,7 @@ cp .env.example .env
 ```
 Open [.env](file:///.env) and configure the variables:
 - **`NEXT_PUBLIC_APP_URL`**: Set this to your laptop's local network Wi-Fi IP address (e.g., `http://192.168.1.100:3000`) so your phone can resolve and load the tickets over Wi-Fi when scanning.
+- **`NEXT_PUBLIC_DISABLE_SIGNUP`**: Set to `true` to completely disable new registrations/sign-ups, or `false` to keep registrations open.
 - **`NEXTAUTH_SECRET`**: Set a secret key to sign and encrypt session cookies (e.g. `some_random_secret_string`).
 - **`RESEND_API_KEY`**: Paste your Resend API Key to enable live email delivery. (If left blank, invitations will gracefully fall back to printing verification links directly to the Docker logs console for easy testing).
 - **`DATABASE_URL`**: Set to the local Docker database connection string:

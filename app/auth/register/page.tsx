@@ -12,6 +12,8 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const isSignupDisabled = process.env.NEXT_PUBLIC_DISABLE_SIGNUP === "true";
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -35,6 +37,32 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  if (isSignupDisabled) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#1A1A1A] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-xl border border-gray-100 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600 border border-red-100">
+            <AlertCircle className="h-6 w-6" />
+          </div>
+          <h2 className="mt-6 text-3xl font-extrabold tracking-tight text-[#1A1A1A]">
+            Registration Disabled
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            New account creation is currently disabled by the administrator.
+          </p>
+          <div className="pt-4">
+            <Link
+              href="/auth/login"
+              className="inline-flex w-full justify-center rounded-lg bg-[#1F3D2B] py-3 px-4 text-sm font-semibold text-[#F5E6D3] hover:bg-[#152a1e] transition-colors"
+            >
+              Go to Log In
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#1A1A1A] px-4 py-12 sm:px-6 lg:px-8">

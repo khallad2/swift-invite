@@ -4,6 +4,10 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
+    if (process.env.NEXT_PUBLIC_DISABLE_SIGNUP === "true" || process.env.DISABLE_SIGNUP === "true") {
+      return NextResponse.json({ error: "Registration is currently disabled" }, { status: 403 });
+    }
+
     const { email, password } = await req.json();
 
     if (!email || !password) {

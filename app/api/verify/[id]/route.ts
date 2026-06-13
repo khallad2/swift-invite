@@ -22,7 +22,7 @@ export async function POST(
     const result = await db.$transaction(async (tx: any) => {
       // 1. Fetch invitation and lock the row to prevent concurrent scan race conditions
       const invites = await tx.$queryRaw<any[]>`
-        SELECT * FROM "Invitation" WHERE "id" = ${id} LIMIT 1 FOR UPDATE
+        SELECT * FROM Invitation WHERE id = ${id} LIMIT 1 FOR UPDATE
       `;
 
       if (!invites || invites.length === 0) {
@@ -54,9 +54,9 @@ export async function POST(
       // 3. Update the invitation status to checked_in
       const now = new Date();
       await tx.$executeRaw`
-        UPDATE "Invitation" 
-        SET "status" = 'checked_in', "scannedAt" = ${now} 
-        WHERE "id" = ${id}
+        UPDATE Invitation 
+        SET status = 'checked_in', scannedAt = ${now} 
+        WHERE id = ${id}
       `;
 
       return {

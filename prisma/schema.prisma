@@ -1,0 +1,40 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Simple hashed password for organizer login
+  events    Event[]
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id          String       @id @default(uuid())
+  title       String
+  description String?
+  location    String
+  dateTime    DateTime
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invitations Invitation[]
+  createdAt   DateTime     @default(now())
+}
+
+model Invitation {
+  id          String    @id @default(uuid()) // This UUID serves as the unique validation token
+  eventId     String
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  guestEmail  String
+  status      String    @default("pending") // Enums: "pending", "checked_in"
+  scannedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([eventId, guestEmail]) // Prevents sending duplicate invites to the same person for an event
+}

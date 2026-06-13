@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: swiftinvite_db
+    restart: always
+    environment:
+      POSTGRES_USER: swift_user
+      POSTGRES_PASSWORD: swift_secure_password
+      POSTGRES_DB: swiftinvite
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: swiftinvite_web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://swift_user:swift_secure_password@db:5432/swiftinvite?schema=public
+      - NEXTAUTH_SECRET=super_secret_nextauth_string_123
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

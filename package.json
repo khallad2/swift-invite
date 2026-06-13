@@ -1,0 +1,35 @@
+{
+  "name": "swiftinvite",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@react-email/components": "^1.0.12",
+    "bcryptjs": "^3.0.3",
+    "html5-qrcode": "^2.3.8",
+    "lucide-react": "^1.18.0",
+    "next": "14.2.35",
+    "next-auth": "^4.24.14",
+    "react": "^18",
+    "react-dom": "^18",
+    "resend": "^6.12.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

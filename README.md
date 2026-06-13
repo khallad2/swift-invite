@@ -42,14 +42,19 @@ cp .env.example .env
 ```
 Open [.env](file:///.env) and configure the variables:
 - **`NEXT_PUBLIC_APP_URL`**: Set this to your laptop's local network Wi-Fi IP address (e.g., `http://192.168.1.100:3000`) so your phone can resolve and load the tickets over Wi-Fi when scanning.
+- **`NEXTAUTH_SECRET`**: Set a secret key to sign and encrypt session cookies (e.g. `some_random_secret_string`).
 - **`RESEND_API_KEY`**: Paste your Resend API Key to enable live email delivery. (If left blank, invitations will gracefully fall back to printing verification links directly to the Docker logs console for easy testing).
+- **`DATABASE_URL`**: Set to the local Docker database connection string:
+  ```env
+  DATABASE_URL="mysql://swift_dev_user:swift_dev_password@db:3306/swiftinvite_dev"
+  ```
 
 ### 3. Spin Up Containers
 Launch the multi-container configuration:
 ```bash
 docker compose up --build
 ```
-This command builds the Next.js standalone container, starts the PostgreSQL database, automatically pushes database schemas on container start, and opens port `3000` on your host machine.
+This command builds the Next.js standalone container, starts the MySQL database, automatically pushes database schemas on container start, and opens port `3000` on your host machine.
 
 Access the portal at: **`http://localhost:3000`**
 
@@ -57,16 +62,18 @@ Access the portal at: **`http://localhost:3000`**
 
 ## 💻 Local Development
 
-To run the Next.js app locally in development mode:
+To run the Next.js app locally in development mode (without Docker):
 
 1. **Install Dependencies**:
    ```bash
    npm install
    ```
-2. **Setup local Database**: Configure a local PostgreSQL instance and set `DATABASE_URL` in `.env`.
+2. **Setup local Database**: Configure a local MySQL instance and set `DATABASE_URL` in `.env`.
 3. **Generate Prisma Client & Push Schema**:
    ```bash
    npx prisma generate
+   ```
+   ```bash
    npx prisma db push
    ```
 4. **Launch Dev Server**:
@@ -91,14 +98,18 @@ If you are deploying on a classic web hosting platform like **Hostinger** utiliz
 2. **Import Tables via phpMyAdmin**:
    * Log into your Hostinger control panel.
    * Go to **Databases** -> **phpMyAdmin** and enter your database administration portal.
-   * Select your database (e.g., `u965651603_sw_invite_db`).
+   * Select your database (e.g., `your_database_name`).
    * Click on the **Import** tab at the top.
    * Click **Choose File** and select the [schema.sql](file:///Users/khallad/Documents/SwiftInvite/SwiftInviteApp/schema.sql) file located in the root of the project.
    * Scroll down and click **Import** (or **Go**) to build all required tables (`User`, `Event`, `Invitation`).
-3. **Set Environment Variable**: In the Hostinger Horizons app configuration dashboard, add `DATABASE_URL`:
+3. **Set Environment Variable**: In the Hostinger Horizons app configuration dashboard, add `DATABASE_URL` (without quotes around the value):
    ```env
-   DATABASE_URL="mysql://YOUR_DB_USER:YOUR_DB_PASSWORD@127.0.0.1:3306/u965651603_sw_invite_db"
+   DATABASE_URL=mysql://YOUR_DB_USER:YOUR_DB_PASSWORD@YOUR_DB_HOST:3306/YOUR_DB_NAME
    ```
+   * *Example database host:* `srv1812.hstgr.io` (or the IP address `92.113.22.70`)
+4. **Set NextAuth Secrets**: In your dashboard, configure:
+   * **`NEXTAUTH_SECRET`**: `your_secure_random_string`
+   * **`NEXTAUTH_URL`**: `https://yourdomain.com`
 
 ---
 

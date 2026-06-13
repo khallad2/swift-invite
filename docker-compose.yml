@@ -2,17 +2,23 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:15-alpine
-    container_name: swiftinvite_db
+    image: mysql:8.0
+    container_name: swiftinvite_mysql
     restart: always
     environment:
-      POSTGRES_USER: swift_user
-      POSTGRES_PASSWORD: swift_secure_password
-      POSTGRES_DB: swiftinvite
+      MYSQL_DATABASE: swiftinvite_dev
+      MYSQL_USER: swift_dev_user
+      MYSQL_PASSWORD: swift_dev_password
+      MYSQL_ROOT_PASSWORD: swift_root_password
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+    # Ensure MySQL healthcheck is defined so the web app doesn't attempt connection too early
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
+      timeout: 10s
+      retries: 5
 
   web:
     build:
@@ -23,12 +29,13 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://swift_user:swift_secure_password@db:5432/swiftinvite?schema=public
-      - NEXTAUTH_SECRET=super_secret_nextauth_string_123
+      - DATABASE_URL=mysql://swift_dev_user:swift_dev_password@db:3306/swiftinvite_dev
+      - NEXTAUTH_SECRET=local_nextauth_secret_key_123
       - RESEND_API_KEY=${RESEND_API_KEY}
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
-  postgres_data:
+  mysql_data:

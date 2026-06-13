@@ -9,7 +9,7 @@ A lightweight, frictionless, web-based event invitation and gate check-in system
 - **🚀 Frictionless Guest Inviter**: Batch-paste guest email addresses and instantly generate tickets.
 - **📧 Clean HTML Email Delivery**: Automated beautifully-formatted invitations sent via Resend API containing dynamic event details and embedded QR codes.
 - **📷 Web-Native Gate Scanner**: Bouncers scan ticket QR codes using their phone's native browser camera—no App Store downloads required.
-- **🔒 PostgreSQL Concurrency Lock**: Secured with row-level transaction database locks (`SELECT ... FOR UPDATE`) to completely eliminate double-scanning or ticket-sharing race conditions.
+- **🔒 Database Concurrency Lock**: Secured with row-level transaction database locks (`SELECT ... FOR UPDATE` in MySQL InnoDB & PostgreSQL) to completely eliminate double-scanning or ticket-sharing race conditions.
 - **📊 Live Check-in Metrics**: Real-time event tiles in the dashboard showing check-in progress bars and ratios (e.g. `14/50 Checked In`).
 - **🛡️ Secure Access Protection**: Restricts scans to verified event owners while providing guests with a friendly invitation details landing page.
 
@@ -19,8 +19,8 @@ A lightweight, frictionless, web-based event invitation and gate check-in system
 
 - **Framework**: [Next.js 14](https://nextjs.org/) (App Router & Strict TypeScript)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database**: [PostgreSQL](https://www.postgresql.org/)
-- **ORM**: [Prisma ORM](https://www.prisma.io/) (for schema modeling and migrations)
+- **Database**: [MySQL / MariaDB](https://www.mysql.com/) (compatible with Hostinger phpMyAdmin deployments; PostgreSQL is also supported)
+- **ORM**: [Prisma ORM](https://www.prisma.io/) (configured for MySQL or PostgreSQL)
 - **Authentication**: [NextAuth.js](https://next-auth.js.org/) (Credentials Provider)
 - **QR Camera Scanning**: [html5-qrcode](https://github.com/mebjas/html5-qrcode) (Browser-native web camera module)
 - **Email Delivery**: [Resend API](https://resend.com/)
@@ -74,6 +74,31 @@ To run the Next.js app locally in development mode:
    npm run dev
    ```
    Open `http://localhost:3000` in your browser.
+
+---
+
+## 🗄️ Database Setup (Hostinger & phpMyAdmin)
+
+If you are deploying on a classic web hosting platform like **Hostinger** utilizing **phpMyAdmin**:
+
+1. **Configure Prisma**: Ensure your datasource provider is set to `"mysql"` in your [schema.prisma](file:///Users/khallad/Documents/SwiftInvite/SwiftInviteApp/prisma/schema.prisma) file:
+   ```prisma
+   datasource db {
+     provider = "mysql"
+     url      = env("DATABASE_URL")
+   }
+   ```
+2. **Import Tables via phpMyAdmin**:
+   * Log into your Hostinger control panel.
+   * Go to **Databases** -> **phpMyAdmin** and enter your database administration portal.
+   * Select your database (e.g., `u965651603_sw_invite_db`).
+   * Click on the **Import** tab at the top.
+   * Click **Choose File** and select the [schema.sql](file:///Users/khallad/Documents/SwiftInvite/SwiftInviteApp/schema.sql) file located in the root of the project.
+   * Scroll down and click **Import** (or **Go**) to build all required tables (`User`, `Event`, `Invitation`).
+3. **Set Environment Variable**: In the Hostinger Horizons app configuration dashboard, add `DATABASE_URL`:
+   ```env
+   DATABASE_URL="mysql://YOUR_DB_USER:YOUR_DB_PASSWORD@127.0.0.1:3306/u965651603_sw_invite_db"
+   ```
 
 ---
 

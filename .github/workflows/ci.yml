@@ -1,0 +1,81 @@
+name: CI Build & Automated Rollback
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Verify
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: mysql://root:password@localhost:3306/swiftinvite_dev
+      NEXTAUTH_SECRET: temp_nextauth_secret_key_for_build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Build Next.js Application
+        run: npm run build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: docker build -t swiftinvite:latest .
+
+  rollback:
+    name: Automatic Rollback
+    runs-on: ubuntu-latest
+    needs: build
+    if: failure() && github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout repository with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git Credentials
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Revert Broken Commit
+        run: |
+          COMMIT_TO_REVERT=$(git rev-parse HEAD)
+          echo "Build failed on commit $COMMIT_TO_REVERT. Initiating rollback..."
+          
+          # Check if the commit is a merge commit
+          PARENTS=$(git show --no-patch --format="%p" $COMMIT_TO_REVERT)
+          if echo "$PARENTS" | grep -q ' '; then
+            echo "Reverting merge commit with -m 1..."
+            git revert --no-edit -m 1 $COMMIT_TO_REVERT
+          else
+            echo "Reverting standard commit..."
+            git revert --no-edit $COMMIT_TO_REVERT
+          fi
+
+      - name: Push Revert to Master
+        run: |
+          git push origin HEAD:master

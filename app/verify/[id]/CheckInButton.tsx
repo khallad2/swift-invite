@@ -25,6 +25,7 @@ export default function CheckInButton({ invitationId }: { invitationId: string }
       }
 
       router.refresh();
+      setLoading(false);
     } catch (err: any) {
       setError(err.message || "Failed to check in");
       setLoading(false);

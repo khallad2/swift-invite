@@ -82,8 +82,9 @@ export default function NewEventPage() {
             <div className="space-y-5">
               {/* Event Title */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 block mb-1">Event Title</label>
+                <label htmlFor="title" className="text-sm font-semibold text-gray-700 block mb-1">Event Title</label>
                 <input
+                  id="title"
                   type="text"
                   required
                   value={title}
@@ -96,12 +97,13 @@ export default function NewEventPage() {
               {/* Date & Time and Location in a Grid */}
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 block mb-1">Date & Time</label>
+                  <label htmlFor="dateTime" className="text-sm font-semibold text-gray-700 block mb-1">Date & Time</label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                       <Calendar className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
+                      id="dateTime"
                       type="datetime-local"
                       required
                       value={dateTime}
@@ -112,12 +114,13 @@ export default function NewEventPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 block mb-1">Location</label>
+                  <label htmlFor="location" className="text-sm font-semibold text-gray-700 block mb-1">Location</label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                       <MapPin className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
+                      id="location"
                       type="text"
                       required
                       value={location}
@@ -131,12 +134,13 @@ export default function NewEventPage() {
 
               {/* Description */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 block mb-1">Description (Optional)</label>
+                <label htmlFor="description" className="text-sm font-semibold text-gray-700 block mb-1">Description (Optional)</label>
                 <div className="relative">
                   <div className="pointer-events-none absolute top-3 left-3">
                     <AlignLeft className="h-5 w-5 text-gray-400" />
                   </div>
                   <textarea
+                    id="description"
                     rows={3}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -148,7 +152,7 @@ export default function NewEventPage() {
 
               {/* Guest Emails */}
               <div>
-                <label className="text-sm font-semibold text-gray-700 block mb-1">
+                <label htmlFor="emails" className="text-sm font-semibold text-gray-700 block mb-1">
                   Enter Guest Emails (one email per line or separated by commas)
                 </label>
                 <div className="relative">
@@ -156,6 +160,7 @@ export default function NewEventPage() {
                     <Users className="h-5 w-5 text-gray-400" />
                   </div>
                   <textarea
+                    id="emails"
                     required
                     rows={6}
                     value={emails}
